@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Generic;
 using Volo.Abp.Application.Dtos;
-using Acme.Ecommerce.Domain.Entities; // <= FIXED
+using Acme.Ecommerce.Domain.Shared.Enums;
+
+using Acme.Ecommerce.Domain.Entities; 
 
 namespace Acme.Ecommerce.Orders.Dtos
 {

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using Volo.Abp.Domain.Entities.Auditing;
+using Acme.Ecommerce.Domain.Shared.Enums;
 
 namespace Acme.Ecommerce.Domain.Entities
 {
@@ -40,12 +41,5 @@ namespace Acme.Ecommerce.Domain.Entities
         }
     }
 
-    public enum OrderStatus
-    {
-        Pending,
-        Processing,
-        Shipped,
-        Completed,
-        Cancelled
-    }
+    
 }

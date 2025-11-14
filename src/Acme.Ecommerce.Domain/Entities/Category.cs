@@ -24,7 +24,6 @@ namespace Acme.Ecommerce.Domain.Entities
 
         public void SetName(string name)
         {
-            // Add validation logic here
             Name = name;
         }
     }

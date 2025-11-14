@@ -24,8 +24,14 @@ namespace Acme.Ecommerce.Domain.Entities
 
         public void DecreaseStock(int quantity)
         {
-            if (quantity < 0) throw new ArgumentException("Quantity must be positive.");
-            if (StockQuantity < quantity) throw new InvalidOperationException("Not enough stock.");
+            if (quantity < 0)
+            { 
+                throw new ArgumentException("Quantity must be positive.");
+            }
+            if(StockQuantity < quantity)
+                    { 
+                    throw new InvalidOperationException("Not enough stock.");
+                      }
             StockQuantity -= quantity;
         }
     }

@@ -13,7 +13,6 @@ namespace Acme.Ecommerce.Domain.Entities
 
         private Product()
         {
-            /* This constructor is for ORM usage */
         }
 
         public Product(Guid id, string name, Guid categoryId) : base(id)
@@ -24,13 +23,11 @@ namespace Acme.Ecommerce.Domain.Entities
 
         public void SetName(string name)
         {
-            // Add validation logic here
             Name = name;
         }
 
         public void SetCategory(Guid categoryId)
         {
-            // Add validation logic here
             CategoryId = categoryId;
         }
     }

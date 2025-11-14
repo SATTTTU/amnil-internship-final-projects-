@@ -2,7 +2,7 @@ using System;
 using System.Collections.ObjectModel;
 using Volo.Abp.Domain.Entities.Auditing;
 
-namespace MyECommerce.Products
+namespace Acme.Ecommerce.Domain.Entities
 {
     public class Category : FullAuditedAggregateRoot<Guid>
     {

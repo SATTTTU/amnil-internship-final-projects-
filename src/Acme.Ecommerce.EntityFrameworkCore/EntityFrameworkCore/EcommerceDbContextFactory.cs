@@ -17,7 +17,7 @@ public class EcommerceDbContextFactory : IDesignTimeDbContextFactory<EcommerceDb
         var configuration = BuildConfiguration();
 
         var builder = new DbContextOptionsBuilder<EcommerceDbContext>()
-            .UseSqlServer(configuration.GetConnectionString("Default"));
+            .UseNpgsql(configuration.GetConnectionString("Default"));
 
         return new EcommerceDbContext(builder.Options);
     }

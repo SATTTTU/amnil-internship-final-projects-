@@ -33,10 +33,11 @@ public class DbMigratorHostedService : IHostedService
         {
             await application.InitializeAsync();
 
-            await application
-                .ServiceProvider
-                .GetRequiredService<EcommerceDbMigrationService>()
-                .MigrateAsync();
+            // Drop and recreate the database to ensure clean migrations
+            var dbService = application.ServiceProvider.GetRequiredService<EcommerceDbMigrationService>();
+            await dbService.DropAndRecreateDatabase();
+
+            await dbService.MigrateAsync();
 
             await application.ShutdownAsync();
 

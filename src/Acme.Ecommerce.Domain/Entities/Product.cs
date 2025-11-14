@@ -1,7 +1,7 @@
 using System;
 using Volo.Abp.Domain.Entities.Auditing;
 
-namespace MyECommerce.Products
+namespace Acme.Ecommerce.Domain.Entities
 {
     public class Product : FullAuditedAggregateRoot<Guid>
     {

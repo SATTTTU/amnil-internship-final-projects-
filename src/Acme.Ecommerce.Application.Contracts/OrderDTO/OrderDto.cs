@@ -1,9 +1,9 @@
 using System;
 using System.Collections.Generic;
 using Volo.Abp.Application.Dtos;
-using MyECommerce.Orders;
+using Acme.Ecommerce.Domain.Entities; // <= FIXED
 
-namespace MyECommerce.Orders.Dtos
+namespace Acme.Ecommerce.Orders.Dtos
 {
     public class OrderDto : AuditedEntityDto<Guid>
     {

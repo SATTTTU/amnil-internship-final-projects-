@@ -1,7 +1,6 @@
 using System;
 using Volo.Abp.Application.Dtos;
-
-namespace MyECommerce.Orders.Dtos
+namespace Acme.Ecommerce.Orders.Dtos  
 {
     public class OrderItemDto : EntityDto<Guid>
     {

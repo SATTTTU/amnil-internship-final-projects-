@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using Volo.Abp.Domain.Entities.Auditing;
 
-namespace MyECommerce.Orders
+namespace Acme.Ecommerce.Domain.Entities
 {
     public class Order : FullAuditedAggregateRoot<Guid>
     {
@@ -22,14 +22,13 @@ namespace MyECommerce.Orders
         public Order(Guid id, Guid customerId) : base(id)
         {
             CustomerId = customerId;
-            OrderDate = DateTime.Now;
+            OrderDate = DateTime.UtcNow;
             Status = OrderStatus.Pending;
             OrderItems = new Collection<OrderItem>();
         }
 
         public void AddOrderItem(Guid productId, int quantity, decimal unitPrice)
         {
-            // Logic to add an item and update total amount
             var orderItem = new OrderItem(Id, productId, quantity, unitPrice);
             OrderItems.Add(orderItem);
             TotalAmount += quantity * unitPrice;

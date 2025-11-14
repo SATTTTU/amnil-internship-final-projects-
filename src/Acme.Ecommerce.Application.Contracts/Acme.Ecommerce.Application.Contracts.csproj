@@ -9,6 +9,8 @@
   </PropertyGroup>
 
   <ItemGroup>
+	  <ProjectReference Include="..\Acme.Ecommerce.Domain\Acme.Ecommerce.Domain.csproj" />
+	  <ProjectReference Include="..\Acme.Ecommerce.Domain.Shared\Acme.Ecommerce.Domain.Shared.csproj" />
     <ProjectReference Include="..\Acme.Ecommerce.Domain.Shared\Acme.Ecommerce.Domain.Shared.csproj" />
   </ItemGroup>
 

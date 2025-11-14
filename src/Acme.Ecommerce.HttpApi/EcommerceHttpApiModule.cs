@@ -1,25 +1,16 @@
 ﻿using Localization.Resources.AbpUi;
 using Acme.Ecommerce.Localization;
-using Volo.Abp.Account;
-using Volo.Abp.FeatureManagement;
-using Volo.Abp.Identity;
+// Identity/Account/TenantManagement removed to keep app domain-only
 using Volo.Abp.Localization;
 using Volo.Abp.Modularity;
-using Volo.Abp.PermissionManagement.HttpApi;
-using Volo.Abp.SettingManagement;
+// Permission/Setting management removed
 using Volo.Abp.TenantManagement;
 
 namespace Acme.Ecommerce;
 
 [DependsOn(
-    typeof(EcommerceApplicationContractsModule),
-    typeof(AbpAccountHttpApiModule),
-    typeof(AbpIdentityHttpApiModule),
-    typeof(AbpPermissionManagementHttpApiModule),
-    typeof(AbpTenantManagementHttpApiModule),
-    typeof(AbpFeatureManagementHttpApiModule),
-    typeof(AbpSettingManagementHttpApiModule)
-    )]
+    typeof(EcommerceApplicationContractsModule)
+)] 
 public class EcommerceHttpApiModule : AbpModule
 {
     public override void ConfigureServices(ServiceConfigurationContext context)

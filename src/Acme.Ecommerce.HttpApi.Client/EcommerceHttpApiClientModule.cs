@@ -1,23 +1,13 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using Volo.Abp.Account;
-using Volo.Abp.FeatureManagement;
-using Volo.Abp.Identity;
+// Account/Identity/TenantManagement HTTP client modules removed to keep domain-only
 using Volo.Abp.Modularity;
-using Volo.Abp.PermissionManagement;
-using Volo.Abp.TenantManagement;
-using Volo.Abp.SettingManagement;
+using Volo.Abp.VirtualFileSystem;
 using Volo.Abp.VirtualFileSystem;
 
 namespace Acme.Ecommerce;
 
 [DependsOn(
-    typeof(EcommerceApplicationContractsModule),
-    typeof(AbpAccountHttpApiClientModule),
-    typeof(AbpIdentityHttpApiClientModule),
-    typeof(AbpPermissionManagementHttpApiClientModule),
-    typeof(AbpTenantManagementHttpApiClientModule),
-    typeof(AbpFeatureManagementHttpApiClientModule),
-    typeof(AbpSettingManagementHttpApiClientModule)
+    typeof(EcommerceApplicationContractsModule)
 )]
 public class EcommerceHttpApiClientModule : AbpModule
 {

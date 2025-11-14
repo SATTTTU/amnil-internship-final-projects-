@@ -4,15 +4,11 @@ using Acme.Ecommerce.MultiTenancy;
 using Volo.Abp.AuditLogging;
 using Volo.Abp.BackgroundJobs;
 using Volo.Abp.Emailing;
-using Volo.Abp.FeatureManagement;
 using Volo.Abp.Identity;
 using Volo.Abp.Localization;
 using Volo.Abp.Modularity;
 using Volo.Abp.MultiTenancy;
 using Volo.Abp.OpenIddict;
-using Volo.Abp.PermissionManagement.Identity;
-using Volo.Abp.PermissionManagement.OpenIddict;
-using Volo.Abp.SettingManagement;
 using Volo.Abp.TenantManagement;
 
 namespace Acme.Ecommerce;
@@ -20,14 +16,8 @@ namespace Acme.Ecommerce;
 [DependsOn(
     typeof(EcommerceDomainSharedModule),
     typeof(AbpAuditLoggingDomainModule),
-    typeof(AbpBackgroundJobsDomainModule),
-    typeof(AbpFeatureManagementDomainModule),
-    typeof(AbpIdentityDomainModule),
     typeof(AbpOpenIddictDomainModule),
-    typeof(AbpPermissionManagementDomainOpenIddictModule),
-    typeof(AbpPermissionManagementDomainIdentityModule),
-    typeof(AbpSettingManagementDomainModule),
-    typeof(AbpTenantManagementDomainModule),
+    // Identity/Tenant/Management modules removed to keep domain-only
     typeof(AbpEmailingModule)
 )]
 public class EcommerceDomainModule : AbpModule

@@ -1,7 +1,7 @@
 using System;
 using Volo.Abp.Application.Dtos;
 
-namespace MyECommerce.Products.Dtos
+namespace Acme.Ecommerce.Products.Dtos
 {
     public class ProductDto : AuditedEntityDto<Guid>
     {

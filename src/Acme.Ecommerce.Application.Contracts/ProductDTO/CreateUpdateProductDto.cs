@@ -1,7 +1,7 @@
 using System;
 using System.ComponentModel.DataAnnotations;
 
-namespace MyECommerce.Products.Dtos
+namespace Acme.Ecommerce.Products.Dtos
 {
     public class CreateUpdateProductDto
     {

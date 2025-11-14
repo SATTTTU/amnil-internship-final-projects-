@@ -2,10 +2,10 @@ using System;
 using System.Threading.Tasks;
 using Volo.Abp.Application.Services;
 using Volo.Abp.Domain.Repositories;
-using MyECommerce.Orders.Dtos;
-using MyECommerce.Products;
+using Acme.Ecommerce.Orders.Dtos;
+using Acme.Ecommerce.Domain.Entities;
 
-namespace MyECommerce.Orders
+namespace Acme.Ecommerce.Orders
 {
     public class OrderAppService : ApplicationService, IOrderAppService
     {

@@ -1,8 +1,6 @@
-using MyECommerce.Inventory;
-using MyECommerce.Inventory.Dtos;
 using System;
 
-namespace MyECommerce.Inventory.Dtos
+namespace Acme.Ecommerce.Inventory.Dtos
 {
     public class UpdateInventoryDto
     {

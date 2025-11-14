@@ -77,5 +77,6 @@ public class EcommerceDbContext :
             b.ToTable("OrderItems");
             b.ConfigureByConvention();
         });
+        // (Only domain entities are configured here.)
     }
 }

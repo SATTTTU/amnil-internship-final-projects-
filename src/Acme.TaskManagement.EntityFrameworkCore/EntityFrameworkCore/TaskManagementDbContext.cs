@@ -24,6 +24,8 @@ public class TaskManagementDbContext :
     ITenantManagementDbContext
 {
     /* Add DbSet properties for your Aggregate Roots / Entities here. */
+    public DbSet<Project> Projects { get; set; }
+    public DbSet<Task> Tasks { get; set; }
 
     #region Entities from the modules
 
@@ -75,12 +77,56 @@ public class TaskManagementDbContext :
         builder.ConfigureTenantManagement();
 
         /* Configure your own tables/entities inside here */
+        builder.Entity<Project>(b =>
+        {
+            // 1. Set the table name
+            b.ToTable(YourProjectNameConsts.DbTablePrefix + "Projects",
+                YourProjectNameConsts.DbSchema);
 
-        //builder.Entity<YourEntity>(b =>
-        //{
-        //    b.ToTable(TaskManagementConsts.DbTablePrefix + "YourEntities", TaskManagementConsts.DbSchema);
-        //    b.ConfigureByConvention(); //auto configure for the base class props
-        //    //...
-        //});
-    }
+            // 2. Apply ABP's standard auditing properties
+            b.ConfigureByConvention();
+
+            // 3. Configure primary key
+            b.HasKey(x => x.Id);
+
+            // 4. Configure properties
+            b.Property(x => x.Name)
+                .IsRequired() // Sets the column to be NOT NULL
+                .HasMaxLength(128); // Sets the column to be nvarchar(128)
+        });
+
+        // Task Entity Configuration
+        builder.Entity<Task>(b =>
+        {
+            // 1. Set the table name
+            b.ToTable(YourProjectNameConsts.DbTablePrefix + "Tasks",
+                YourProjectNameConsts.DbSchema);
+
+            // 2. Apply ABP's standard auditing properties
+            b.ConfigureByConvention();
+
+            // 3. Configure primary key
+            b.HasKey(x => x.Id);
+
+            // 4. Configure properties
+            b.Property(x => x.Title)
+                .IsRequired()
+                .HasMaxLength(256);
+
+            // 5. Configure Relationships (Foreign Key)
+            // This defines the one-to-many relationship: One Project has many Tasks.
+            b.HasOne(x => x.Project) // Navigation property in Task entity
+               .WithMany()           // A Project can have many tasks (no navigation property in Project needed)
+               .HasForeignKey(x => x.ProjectId) // The foreign key property in the Task entity
+               .IsRequired();        // Makes the foreign key NOT NULL
+        });
+    
+
+    //builder.Entity<YourEntity>(b =>
+    //{
+    //    b.ToTable(TaskManagementConsts.DbTablePrefix + "YourEntities", TaskManagementConsts.DbSchema);
+    //    b.ConfigureByConvention(); //auto configure for the base class props
+    //    //...
+    //});
+}
 }

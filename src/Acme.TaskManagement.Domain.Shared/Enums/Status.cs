@@ -4,7 +4,6 @@ namespace Acme.TaskManagement.Domain.Shared.Enums
     {
         ToDo,
         InProgress,
-        Done,
-        Blocked
+        Done
     }
 }

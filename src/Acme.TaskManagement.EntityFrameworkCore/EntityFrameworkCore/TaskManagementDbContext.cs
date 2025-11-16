@@ -4,6 +4,7 @@ using Volo.Abp.BackgroundJobs.EntityFrameworkCore;
 using Volo.Abp.Data;
 using Volo.Abp.DependencyInjection;
 using Volo.Abp.EntityFrameworkCore;
+using Volo.Abp.EntityFrameworkCore.Modeling;
 using Volo.Abp.FeatureManagement.EntityFrameworkCore;
 using Volo.Abp.Identity;
 using Volo.Abp.Identity.EntityFrameworkCore;
@@ -12,6 +13,8 @@ using Volo.Abp.PermissionManagement.EntityFrameworkCore;
 using Volo.Abp.SettingManagement.EntityFrameworkCore;
 using Volo.Abp.TenantManagement;
 using Volo.Abp.TenantManagement.EntityFrameworkCore;
+using Acme.TaskManagement.Domain.Entities; // Your entities
+using Acme.TaskManagement; // Required for TaskManagementConsts
 
 namespace Acme.TaskManagement.EntityFrameworkCore;
 
@@ -28,18 +31,6 @@ public class TaskManagementDbContext :
     public DbSet<Task> Tasks { get; set; }
 
     #region Entities from the modules
-
-    /* Notice: We only implemented IIdentityDbContext and ITenantManagementDbContext
-     * and replaced them for this DbContext. This allows you to perform JOIN
-     * queries for the entities of these modules over the repositories easily. You
-     * typically don't need that for other modules. But, if you need, you can
-     * implement the DbContext interface of the needed module and use ReplaceDbContext
-     * attribute just like IIdentityDbContext and ITenantManagementDbContext.
-     *
-     * More info: Replacing a DbContext of a module ensures that the related module
-     * uses this DbContext on runtime. Otherwise, it will use its own DbContext class.
-     */
-
     //Identity
     public DbSet<IdentityUser> Users { get; set; }
     public DbSet<IdentityRole> Roles { get; set; }
@@ -52,7 +43,6 @@ public class TaskManagementDbContext :
     // Tenant Management
     public DbSet<Tenant> Tenants { get; set; }
     public DbSet<TenantConnectionString> TenantConnectionStrings { get; set; }
-
     #endregion
 
     public TaskManagementDbContext(DbContextOptions<TaskManagementDbContext> options)
@@ -66,7 +56,6 @@ public class TaskManagementDbContext :
         base.OnModelCreating(builder);
 
         /* Include modules to your migration db context */
-
         builder.ConfigurePermissionManagement();
         builder.ConfigureSettingManagement();
         builder.ConfigureBackgroundJobs();
@@ -77,56 +66,37 @@ public class TaskManagementDbContext :
         builder.ConfigureTenantManagement();
 
         /* Configure your own tables/entities inside here */
+
+        // Project Entity Configuration
         builder.Entity<Project>(b =>
         {
-            // 1. Set the table name
-            b.ToTable(YourProjectNameConsts.DbTablePrefix + "Projects",
-                YourProjectNameConsts.DbSchema);
+            b.ToTable(TaskManagementConsts.DbTablePrefix + "Projects",
+                TaskManagementConsts.DbSchema);
 
-            // 2. Apply ABP's standard auditing properties
-            b.ConfigureByConvention();
+            b.ConfigureByConvention(); //auto configure for the base class props
 
-            // 3. Configure primary key
-            b.HasKey(x => x.Id);
-
-            // 4. Configure properties
             b.Property(x => x.Name)
-                .IsRequired() // Sets the column to be NOT NULL
-                .HasMaxLength(128); // Sets the column to be nvarchar(128)
+                .IsRequired()
+                .HasMaxLength(128);
         });
 
         // Task Entity Configuration
         builder.Entity<Task>(b =>
         {
-            // 1. Set the table name
-            b.ToTable(YourProjectNameConsts.DbTablePrefix + "Tasks",
-                YourProjectNameConsts.DbSchema);
+            b.ToTable(TaskManagementConsts.DbTablePrefix + "Tasks",
+                TaskManagementConsts.DbSchema);
 
-            // 2. Apply ABP's standard auditing properties
-            b.ConfigureByConvention();
+            b.ConfigureByConvention(); //auto configure for the base class props
 
-            // 3. Configure primary key
-            b.HasKey(x => x.Id);
-
-            // 4. Configure properties
             b.Property(x => x.Title)
                 .IsRequired()
                 .HasMaxLength(256);
 
-            // 5. Configure Relationships (Foreign Key)
-            // This defines the one-to-many relationship: One Project has many Tasks.
-            b.HasOne(x => x.Project) // Navigation property in Task entity
-               .WithMany()           // A Project can have many tasks (no navigation property in Project needed)
-               .HasForeignKey(x => x.ProjectId) // The foreign key property in the Task entity
-               .IsRequired();        // Makes the foreign key NOT NULL
+            // Configure the relationship to the Project entity
+            b.HasOne(x => x.Project)
+               .WithMany()
+               .HasForeignKey(x => x.ProjectId)
+               .IsRequired();
         });
-    
-
-    //builder.Entity<YourEntity>(b =>
-    //{
-    //    b.ToTable(TaskManagementConsts.DbTablePrefix + "YourEntities", TaskManagementConsts.DbSchema);
-    //    b.ConfigureByConvention(); //auto configure for the base class props
-    //    //...
-    //});
-}
+    }
 }

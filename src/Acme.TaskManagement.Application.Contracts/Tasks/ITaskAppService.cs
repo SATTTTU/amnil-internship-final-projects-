@@ -2,8 +2,9 @@ using System;
 using System.Threading.Tasks;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Application.Services;
+using Acme.TaskManagement.Contracts.Tasks;
 
-namespace Acme.TaskManagement.Tasks
+namespace Acme.TaskManagement.Application.Contracts.Tasks
 {
     public interface ITaskAppService : ICrudAppService<
         TaskDto,

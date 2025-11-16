@@ -1,7 +1,7 @@
 using System;
 using Volo.Abp.Application.Dtos;
 
-namespace Acme.TaskManagement.Tasks
+namespace Acme.TaskManagement.Contracts.Tasks
 {
     public enum TaskStatusDto
     {

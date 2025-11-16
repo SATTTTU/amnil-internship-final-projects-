@@ -1,6 +1,6 @@
 using System;
 
-namespace Acme.TaskManagement.Tasks
+namespace Acme.TaskManagement. Contracts.Tasks
 {
     public class AssignTaskDto
     {

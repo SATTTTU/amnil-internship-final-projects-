@@ -1,7 +1,7 @@
 using System;
 using System.ComponentModel.DataAnnotations;
 
-namespace Acme.TaskManagement.Tasks
+namespace Acme.TaskManagement.Contracts.Tasks
 {
     public class CreateUpdateTaskDto
     {

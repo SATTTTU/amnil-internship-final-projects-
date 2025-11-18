@@ -191,5 +191,24 @@ namespace Acme.Ecommerce.Inventory
                 LastModificationTime = entity.LastModificationTime
             };
         }
+
+        private void ValidateInput(Guid productId, UpdateInventoryDto input)
+        {
+            if (productId == Guid.Empty)
+            {
+                throw new BusinessException("Inventory.InvalidProductId");
+            }
+
+            if (input == null)
+            {
+                throw new BusinessException("Inventory.InvalidInput");
+            }
+
+            if (input.Quantity <= 0)
+            {
+                throw new BusinessException("Inventory.InvalidQuantity")
+                    .WithData("Quantity", input.Quantity);
+            }
+        }
     }
 }

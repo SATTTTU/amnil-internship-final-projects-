@@ -235,5 +235,26 @@ namespace Acme.Ecommerce.Services
                 UnitPrice = item.UnitPrice
             };
         }
+
+        private void ValidateInput(CreateOrderDto input)
+        {
+            if (input == null)
+            {
+                throw new BusinessException("InputNull")
+                    .WithData("Message", "Order input cannot be null.");
+            }
+
+            if (input.CustomerId == Guid.Empty)
+            {
+                throw new BusinessException("InvalidCustomer")
+                    .WithData("Message", "CustomerId is invalid.");
+            }
+
+            if (input.OrderItems == null || input.OrderItems.Count == 0)
+            {
+                throw new BusinessException("OrderItemsMissing")
+                    .WithData("Message", "Order must contain at least one item.");
+            }
+        }
     }
 }

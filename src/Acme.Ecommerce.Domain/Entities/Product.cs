@@ -12,7 +12,9 @@ namespace Acme.Ecommerce.Domain.Entities
         public Guid CategoryId { get; protected set; }
         public Category Category { get; protected set; }
 
-
+        private Product()
+        {
+        }
         public Product(Guid id, string name, Guid categoryId, decimal price, string description = null)
             : base(id)
         {

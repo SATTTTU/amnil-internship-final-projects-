@@ -9,6 +9,8 @@ using Microsoft.Extensions.Hosting;
 using Acme.Ecommerce.EntityFrameworkCore;
 using Acme.Ecommerce.Localization;
 using Acme.Ecommerce.MultiTenancy;
+using System.Collections.Generic;
+
 using Acme.Ecommerce.Web.Menus;
 using Microsoft.OpenApi.Models;
 using Volo.Abp;
@@ -30,6 +32,11 @@ using Volo.Abp.UI.Navigation.Urls;
 using Volo.Abp.UI;
 using Volo.Abp.UI.Navigation;
 using Volo.Abp.VirtualFileSystem;
+using Volo.Abp.Identity;
+using Volo.Abp.Identity.AspNetCore;
+using Volo.Abp.Account;
+using Volo.Abp.Account.Web;
+using Volo.Abp.OpenIddict;
 
 namespace Acme.Ecommerce.Web;
 
@@ -37,11 +44,18 @@ namespace Acme.Ecommerce.Web;
     typeof(EcommerceHttpApiModule),
     typeof(EcommerceApplicationModule),
     typeof(EcommerceEntityFrameworkCoreModule),
+
+    typeof(AbpIdentityAspNetCoreModule),
+    typeof(AbpAccountWebModule),
+    typeof(AbpAccountHttpApiModule),
+    typeof(AbpOpenIddictAspNetCoreModule),
+
     typeof(AbpAutofacModule),
     typeof(AbpAspNetCoreMvcUiLeptonXLiteThemeModule),
     typeof(AbpAspNetCoreSerilogModule),
     typeof(AbpSwashbuckleModule)
-    )]
+)]
+
 public class EcommerceWebModule : AbpModule
 {
     public override void PreConfigureServices(ServiceConfigurationContext context)
@@ -138,15 +152,30 @@ public class EcommerceWebModule : AbpModule
 
     private void ConfigureSwaggerServices(IServiceCollection services)
     {
-        services.AddAbpSwaggerGen(
+        var configuration = services.GetConfiguration();
+
+        var authority = (configuration["AuthServer:Authority"] ?? configuration["App:SelfUrl"] ?? "https://localhost:44390").TrimEnd('/');
+        var authorizationEndpoint = configuration["AuthServer:AuthorizationEndpoint"] ?? $"{authority}/connect/authorize";
+        var tokenEndpoint = configuration["AuthServer:TokenEndpoint"] ?? $"{authority}/connect/token";
+
+        services.AddAbpSwaggerGenWithOAuth(
+            authority,
+            new Dictionary<string, string>
+            {
+            { "Ecommerce", "Ecommerce API" }
+            },
             options =>
             {
                 options.SwaggerDoc("v1", new OpenApiInfo { Title = "Ecommerce API", Version = "v1" });
-                options.DocInclusionPredicate((docName, description) => true);
+                options.DocInclusionPredicate((docName, desc) => true);
                 options.CustomSchemaIds(type => type.FullName);
-            }
+            },
+            authorizationEndpoint,
+            tokenEndpoint
         );
     }
+
+
 
     public override void OnApplicationInitialization(ApplicationInitializationContext context)
     {
@@ -176,13 +205,18 @@ public class EcommerceWebModule : AbpModule
 
         app.UseUnitOfWork();
         app.UseDynamicClaims();
+        app.UseAuthentication();
         app.UseAuthorization();
 
         app.UseSwagger();
         app.UseAbpSwaggerUI(options =>
         {
             options.SwaggerEndpoint("/swagger/v1/swagger.json", "Ecommerce API");
+            var configuration = context.ServiceProvider.GetRequiredService<IConfiguration>();
+            options.OAuthClientId(configuration["AuthServer:SwaggerClientId"]);
+            options.OAuthClientSecret(configuration["AuthServer:SwaggerClientSecret"]);
         });
+
 
         app.UseAuditing();
         app.UseAbpSerilogEnrichers();

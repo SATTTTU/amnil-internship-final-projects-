@@ -1,19 +1,36 @@
 <Project>
-  <PropertyGroup>
-    <LangVersion>latest</LangVersion>
-    <Version>1.0.0</Version>
-    <NoWarn>$(NoWarn);CS1591</NoWarn>
-	<AbpProjectType>app</AbpProjectType>
-  </PropertyGroup>
+	<PropertyGroup>
+		<LangVersion>latest</LangVersion>
+		<Version>1.0.0</Version>
+		<NoWarn>$(NoWarn);CS1591</NoWarn>
+		<AbpProjectType>app</AbpProjectType>
 
-  <Target Name="NoWarnOnRazorViewImportedTypeConflicts" BeforeTargets="RazorCoreCompile">
-    <PropertyGroup>
-      <NoWarn>$(NoWarn);0436</NoWarn>
-    </PropertyGroup>
-  </Target>
+		<!--
+      ↓↓↓ ADD THIS ENTIRE PROPERTY GROUP ↓↓↓
+    -->
+		<!-- Centralized Package Version Management -->
+		<TargetFramework>net9.0</TargetFramework>
+		<AbpVersion>9.3.6</AbpVersion>
+		<!-- Use stable EF Core for ABP dependencies -->
+		<EntityFrameworkCoreVersion>9.0.5</EntityFrameworkCoreVersion>
+		<!-- Npgsql provider stable version that is compatible with EF Core 9.x -->
+		<NpgsqlVersion>9.0.4</NpgsqlVersion>
+		<!-- 
+      NOTE: These are the latest compatible versions as of late 2024/early 2025.
+      If you are using a different preview of .NET 9, you may need to find the matching
+      ABP and EF Core versions from the official ABP Framework documentation or blog.
+    -->
 
-  <ItemGroup>
-    <Content Remove="$(UserProfile)\.nuget\packages\*\*\contentFiles\any\*\*.abppkg*" />
-  </ItemGroup>
+	</PropertyGroup>
+
+	<Target Name="NoWarnOnRazorViewImportedTypeConflicts" BeforeTargets="RazorCoreCompile">
+		<PropertyGroup>
+			<NoWarn>$(NoWarn);0436</NoWarn>
+		</PropertyGroup>
+	</Target>
+
+	<ItemGroup>
+		<Content Remove="$(UserProfile)\.nuget\packages\*\*\contentFiles\any\*\*.abppkg*" />
+	</ItemGroup>
 
 </Project>

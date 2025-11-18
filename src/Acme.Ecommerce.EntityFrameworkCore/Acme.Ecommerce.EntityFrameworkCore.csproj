@@ -1,32 +1,35 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-  <Import Project="..\..\common.props" />
+	<Import Project="..\..\common.props" />
 
-  <PropertyGroup>
-    <TargetFramework>net9.0</TargetFramework>
-    <Nullable>enable</Nullable>
-    <RootNamespace>Acme.Ecommerce</RootNamespace>
-  </PropertyGroup>
+	<PropertyGroup>
+		<!-- TargetFramework is now inherited from common.props -->
+		<RootNamespace>Acme.Ecommerce</RootNamespace>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="9.0.4" />
-    <PackageReference Include="Volo.Abp.EntityFrameworkCore.PostgreSql" Version="9.3.6" />
-    <ProjectReference Include="..\Acme.Ecommerce.Domain\Acme.Ecommerce.Domain.csproj" />
-    <PackageReference Include="Volo.Abp.PermissionManagement.EntityFrameworkCore" Version="9.3.6" />
-    <PackageReference Include="Volo.Abp.SettingManagement.EntityFrameworkCore" Version="9.3.6" />
-    <PackageReference Include="Volo.Abp.Identity.EntityFrameworkCore" Version="9.3.6" />
-    <PackageReference Include="Volo.Abp.BackgroundJobs.EntityFrameworkCore" Version="9.3.6" />
-    <PackageReference Include="Volo.Abp.AuditLogging.EntityFrameworkCore" Version="9.3.6" />
-    <PackageReference Include="Volo.Abp.TenantManagement.EntityFrameworkCore" Version="9.3.6" />
-    <PackageReference Include="Volo.Abp.FeatureManagement.EntityFrameworkCore" Version="9.3.6" />
-    <PackageReference Include="Volo.Abp.OpenIddict.EntityFrameworkCore" Version="9.3.6" />
-  </ItemGroup>
+	<ItemGroup>
+		<!-- EF Core Provider -->
+		<PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="$(NpgsqlVersion)" />
 
-  <ItemGroup>
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="9.0.5">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
-    </PackageReference>
-  </ItemGroup>
+		<!-- ABP EF Core Packages -->
+		<PackageReference Include="Volo.Abp.EntityFrameworkCore.PostgreSql" Version="$(AbpVersion)" />
+		<PackageReference Include="Volo.Abp.Identity.EntityFrameworkCore" Version="$(AbpVersion)" />
+		<PackageReference Include="Volo.Abp.PermissionManagement.EntityFrameworkCore" Version="$(AbpVersion)" />
+		<PackageReference Include="Volo.Abp.SettingManagement.EntityFrameworkCore" Version="$(AbpVersion)" />
+		<PackageReference Include="Volo.Abp.BackgroundJobs.EntityFrameworkCore" Version="$(AbpVersion)" />
+		<PackageReference Include="Volo.Abp.AuditLogging.EntityFrameworkCore" Version="$(AbpVersion)" />
+		<PackageReference Include="Volo.Abp.TenantManagement.EntityFrameworkCore" Version="$(AbpVersion)" />
+		<PackageReference Include="Volo.Abp.FeatureManagement.EntityFrameworkCore" Version="$(AbpVersion)" />
+		<PackageReference Include="Volo.Abp.OpenIddict.EntityFrameworkCore" Version="$(AbpVersion)" />
+
+		<!-- Domain Project -->
+		<ProjectReference Include="..\Acme.Ecommerce.Domain\Acme.Ecommerce.Domain.csproj" />
+
+		<!-- EF Tools (must have PrivateAssets=all) -->
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="$(EntityFrameworkCoreVersion)">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
+		</PackageReference>
+	</ItemGroup>
 
 </Project>

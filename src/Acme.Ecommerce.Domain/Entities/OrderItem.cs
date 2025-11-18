@@ -1,7 +1,7 @@
 using System;
 using Volo.Abp;
 using Volo.Abp.Domain.Entities;
-
+using Volo.Abp.Domain.Entities.Auditing;
 namespace Acme.Ecommerce.Domain.Entities
 {
     public class OrderItem : CreationAuditedEntity<Guid>

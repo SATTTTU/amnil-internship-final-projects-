@@ -1,42 +1,28 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Volo.Abp.EntityFrameworkCore.Modeling;
 using Volo.Abp.Data;
 using Volo.Abp.EntityFrameworkCore;
+using Volo.Abp.EntityFrameworkCore.Modeling; 
 using Acme.Ecommerce.Domain.Entities;
-
-
+using Volo.Abp.Identity.EntityFrameworkCore;
+using Volo.Abp.OpenIddict.EntityFrameworkCore;
+using Volo.Abp.PermissionManagement.EntityFrameworkCore;
+using Volo.Abp.SettingManagement.EntityFrameworkCore;
+using Volo.Abp.BackgroundJobs.EntityFrameworkCore;
+using Volo.Abp.AuditLogging.EntityFrameworkCore;
+using Volo.Abp.FeatureManagement.EntityFrameworkCore;
+using Volo.Abp.TenantManagement.EntityFrameworkCore;
 
 
 namespace Acme.Ecommerce.EntityFrameworkCore;
 
 [ConnectionStringName("Default")]
-public class EcommerceDbContext :
-    AbpDbContext<EcommerceDbContext>
+public class EcommerceDbContext : AbpDbContext<EcommerceDbContext>
 {
-    /* Add DbSet properties for your Aggregate Roots / Entities here. */
     public DbSet<Product> Products { get; set; }
     public DbSet<Category> Categories { get; set; }
     public DbSet<Inventory> Inventories { get; set; }
     public DbSet<Order> Orders { get; set; }
     public DbSet<OrderItem> OrderItems { get; set; }
-
-    #region Entities from the modules
-
-    // Identity
-    //public DbSet<IdentityUser> Users { get; set; }
-    //public DbSet<IdentityRole> Roles { get; set; }
-    //public DbSet<IdentityClaimType> ClaimTypes { get; set; }
-    //public DbSet<OrganizationUnit> OrganizationUnits { get; set; }
-    //public DbSet<IdentitySecurityLog> SecurityLogs { get; set; }
-    //public DbSet<IdentityLinkUser> LinkUsers { get; set; }
-    //public DbSet<IdentityUserDelegation> UserDelegations { get; set; }
-    //public DbSet<IdentitySession> Sessions { get; set; }
-
-    // Tenant Management
-    //public DbSet<Tenant> Tenants { get; set; }
-    //public DbSet<TenantConnectionString> TenantConnectionStrings { get; set; }
-
-    #endregion
 
     public EcommerceDbContext(DbContextOptions<EcommerceDbContext> options)
         : base(options)
@@ -47,23 +33,31 @@ public class EcommerceDbContext :
     {
         base.OnModelCreating(builder);
 
-        // Configure your own entities
+        builder.ConfigureIdentity();
+        builder.ConfigureOpenIddict();
+        builder.ConfigurePermissionManagement();
+        builder.ConfigureSettingManagement();
+        builder.ConfigureBackgroundJobs();
+        builder.ConfigureAuditLogging();
+        builder.ConfigureFeatureManagement();
+        builder.ConfigureTenantManagement();
+
         builder.Entity<Product>(b =>
         {
             b.ToTable("Products");
-            b.ConfigureByConvention();
+            b.ConfigureByConvention(); 
         });
 
         builder.Entity<Category>(b =>
         {
             b.ToTable("Categories");
-            b.ConfigureByConvention();
+            b.ConfigureByConvention(); 
         });
 
         builder.Entity<Inventory>(b =>
         {
             b.ToTable("Inventories");
-            b.ConfigureByConvention();
+            b.ConfigureByConvention(); 
         });
 
         builder.Entity<Order>(b =>
@@ -75,8 +69,7 @@ public class EcommerceDbContext :
         builder.Entity<OrderItem>(b =>
         {
             b.ToTable("OrderItems");
-            b.ConfigureByConvention();
+            b.ConfigureByConvention(); 
         });
-        // (Only domain entities are configured here.)
     }
 }

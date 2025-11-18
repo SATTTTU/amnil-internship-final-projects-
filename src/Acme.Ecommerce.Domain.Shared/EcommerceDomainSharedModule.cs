@@ -1,4 +1,5 @@
 using Acme.Ecommerce.Localization;
+using Acme.Ecommerce.Settings;
 using Volo.Abp.AuditLogging;
 using Volo.Abp.BackgroundJobs;
 using Volo.Abp.Identity;
@@ -6,6 +7,7 @@ using Volo.Abp.Localization;
 using Volo.Abp.Localization.ExceptionHandling;
 using Volo.Abp.Modularity;
 using Volo.Abp.OpenIddict;
+using Volo.Abp.Settings;
 using Volo.Abp.TenantManagement;
 using Volo.Abp.Validation.Localization;
 using Volo.Abp.VirtualFileSystem;
@@ -48,6 +50,11 @@ public class EcommerceDomainSharedModule : AbpModule
         Configure<AbpExceptionLocalizationOptions>(options =>
         {
             options.MapCodeNamespace("Ecommerce", typeof(EcommerceResource));
+        });
+
+        Configure<AbpSettingOptions>(options =>
+        {
+            options.DefinitionProviders.Add<EcommerceSettingDefinitionProvider>();
         });
     }
 }

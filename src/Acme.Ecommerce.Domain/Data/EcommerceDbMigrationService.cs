@@ -99,6 +99,12 @@ public class EcommerceDbMigrationService : ITransientDependency
         }
         catch (Exception ex)
         {
+            // Log full exception details including inner exceptions for debugging
+            Logger.LogError(ex, "Error during database seeding: {Message}", ex.Message);
+            if (ex.InnerException != null)
+            {
+                Logger.LogError(ex.InnerException, "Inner exception: {Message}", ex.InnerException.Message);
+            }
             // If some module's seeders (e.g. Identity) cannot be resolved because
             // their EF Core stores are not registered in this project, we should
             // log a warning and continue. This allows migrations to complete.

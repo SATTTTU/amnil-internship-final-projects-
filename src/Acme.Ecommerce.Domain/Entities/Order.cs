@@ -96,7 +96,6 @@ namespace Acme.Ecommerce.Domain.Entities
 
         private OrderItem? FindOrderItem(Guid id)
         {
-            // ? LINQ instead of foreach
             return OrderItems.FirstOrDefault(x => x.Id == id);
         }
     }

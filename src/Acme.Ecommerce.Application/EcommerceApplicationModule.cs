@@ -1,4 +1,5 @@
-﻿using Volo.Abp.AutoMapper;
+﻿using Volo.Abp.Application;
+using Volo.Abp.AutoMapper;
 using Volo.Abp.Modularity;
 
 namespace Acme.Ecommerce;
@@ -6,6 +7,12 @@ namespace Acme.Ecommerce;
 [DependsOn(
     typeof(EcommerceDomainModule),
     typeof(EcommerceApplicationContractsModule),
+
+    // REQUIRED ABP base modules
+    typeof(AbpDddApplicationModule),
+    typeof(AbpDddApplicationContractsModule),
+
+    // Automapper
     typeof(AbpAutoMapperModule)
 )]
 public class EcommerceApplicationModule : AbpModule
@@ -14,7 +21,6 @@ public class EcommerceApplicationModule : AbpModule
     {
         Configure<AbpAutoMapperOptions>(options =>
         {
-            // Automatically load all AutoMapper Profile classes in this assembly
             options.AddMaps<EcommerceApplicationModule>(validate: true);
         });
     }

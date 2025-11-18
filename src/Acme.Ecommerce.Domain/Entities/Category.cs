@@ -12,7 +12,10 @@ namespace Acme.Ecommerce.Domain.Entities
 
         public virtual Collection<Product> Products { get; protected set; }
 
-        
+        private Category()
+        {
+            Products = new Collection<Product>();
+        }
 
         public Category(Guid id, string name, string description = null)
             : base(id)

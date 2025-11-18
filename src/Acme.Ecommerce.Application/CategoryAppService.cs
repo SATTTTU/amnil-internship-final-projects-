@@ -3,15 +3,19 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Acme.Ecommerce.Domain.Entities;
-using Acme.Ecommerce.Products;
+using Microsoft.AspNetCore.Authorization;
+using Volo.Abp.Authorization;
+
 using Acme.Ecommerce.Products.Dtos;
 using Microsoft.Extensions.Logging;
+using Acme.Ecommerce.Permissions;
 using Volo.Abp.Domain.Repositories;
+using Volo.Abp.Application.Dtos;
 using Volo.Abp;
 
 namespace Acme.Ecommerce.Products
 {
-    public class CategoryAppService : ICategoryAppService
+    public class CategoryAppService : EcommerceAppService, ICategoryAppService
     {
         private readonly IRepository<Category, Guid> _categoryRepository;
         private readonly ILogger<CategoryAppService> _logger;
@@ -24,41 +28,45 @@ namespace Acme.Ecommerce.Products
             _logger = logger;
         }
 
-        // ----------------------
-        // GET SINGLE
-        // ----------------------
+        // ---------------------------------------
+        // GET BY ID
+        // ---------------------------------------
+        [AllowAnonymous]
         public async Task<CategoryDto> GetAsync(Guid id)
         {
             try
             {
-                var category = await _categoryRepository.GetAsync(id);
-                return MapToDto(category);
+                var entity = await _categoryRepository.GetAsync(id);
+                return MapToDto(entity);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error getting Category with ID {CategoryId}", id);
+                _logger.LogError(ex, "Error fetching category with ID {Id}", id);
                 throw new BusinessException("Could not fetch category.");
             }
         }
 
-        // ----------------------
+        // ---------------------------------------
         // GET LIST WITH PAGINATION
-        // ----------------------
-        public async Task<List<CategoryDto>> GetListAsync(int page, int pageSize)
+        // ---------------------------------------
+        [AllowAnonymous]
+        public async Task<PagedResultDto<CategoryDto>> GetListAsync(PagedAndSortedResultRequestDto input)
         {
             try
             {
-                if (page <= 0) page = 1;
-                if (pageSize <= 0) pageSize = 10;
-
                 var queryable = await _categoryRepository.GetQueryableAsync();
 
-                var categories = queryable
-                    .Skip((page - 1) * pageSize)
-                    .Take(pageSize)
+                var totalCount = queryable.Count();
+
+                var items = queryable
+                    .Skip(input.SkipCount)
+                    .Take(input.MaxResultCount)
                     .ToList();
 
-                return categories.Select(MapToDto).ToList();
+                return new PagedResultDto<CategoryDto>(
+                    totalCount,
+                    items.Select(MapToDto).ToList()
+                );
             }
             catch (Exception ex)
             {
@@ -67,20 +75,21 @@ namespace Acme.Ecommerce.Products
             }
         }
 
-        // ----------------------
+        // ---------------------------------------
         // CREATE
-        // ----------------------
+        // ---------------------------------------
+        [Authorize(EcommercePermissions.Categories.Create)]
         public async Task<CategoryDto> CreateAsync(CreateUpdateCategoryDto input)
         {
             try
             {
                 Validate(input);
 
-                var newCategory = new Category(Guid.NewGuid(), input.Name);
-                newCategory.SetDescription(input.Description);
+                var entity = new Category(Guid.NewGuid(), input.Name);
+                entity.SetDescription(input.Description);
 
-                var savedEntity = await _categoryRepository.InsertAsync(newCategory);
-                return MapToDto(savedEntity);
+                var saved = await _categoryRepository.InsertAsync(entity);
+                return MapToDto(saved);
             }
             catch (Exception ex)
             {
@@ -89,33 +98,35 @@ namespace Acme.Ecommerce.Products
             }
         }
 
-        // ----------------------
+        // ---------------------------------------
         // UPDATE
-        // ----------------------
+        // ---------------------------------------
+        [Authorize(EcommercePermissions.Categories.Edit)]
         public async Task<CategoryDto> UpdateAsync(Guid id, CreateUpdateCategoryDto input)
         {
             try
             {
                 Validate(input);
 
-                var category = await _categoryRepository.GetAsync(id);
+                var entity = await _categoryRepository.GetAsync(id);
 
-                category.SetName(input.Name);
-                category.SetDescription(input.Description);
+                entity.SetName(input.Name);
+                entity.SetDescription(input.Description);
 
-                var updated = await _categoryRepository.UpdateAsync(category);
+                var updated = await _categoryRepository.UpdateAsync(entity);
                 return MapToDto(updated);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error updating Category with ID {CategoryId}", id);
+                _logger.LogError(ex, "Error updating category with ID {Id}", id);
                 throw new BusinessException("Could not update category.");
             }
         }
 
-        // ----------------------
+        // ---------------------------------------
         // DELETE
-        // ----------------------
+        // ---------------------------------------
+        [Authorize(EcommercePermissions.Categories.Delete)]
         public async Task DeleteAsync(Guid id)
         {
             try
@@ -124,30 +135,28 @@ namespace Acme.Ecommerce.Products
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error deleting Category with ID {CategoryId}", id);
+                _logger.LogError(ex, "Error deleting category with ID {Id}", id);
                 throw new BusinessException("Could not delete category.");
             }
         }
 
-        // ----------------------
-        // VALIDATION METHOD
-        // ----------------------
+        // ---------------------------------------
+        // VALIDATION (AppService-level)
+        // ---------------------------------------
         private void Validate(CreateUpdateCategoryDto input)
         {
             if (string.IsNullOrWhiteSpace(input.Name))
             {
-                throw new BusinessException("Category name cannot be empty.");
+                throw new BusinessException("Name is required.");
             }
 
             if (input.Name.Length > 100)
             {
-                throw new BusinessException("Category name cannot exceed 100 characters.");
+                throw new BusinessException("Name cannot exceed 100 characters.");
             }
         }
 
-        // ----------------------
         // MANUAL MAPPER
-        // ----------------------
         private CategoryDto MapToDto(Category entity)
         {
             return new CategoryDto

@@ -28,9 +28,29 @@ class Program
             .WriteTo.Async(c => c.Console())
             .CreateLogger();
 
-        await CreateHostBuilder(args).RunConsoleAsync();
+        try
+        {
+            Log.Information("Starting database migration...");
+            await CreateHostBuilder(args).RunConsoleAsync();
+        }
+        catch (Exception ex)
+        {
+            // This block will execute when the application crashes
+            Log.Fatal(ex, "Database migration failed!");
+            Console.WriteLine("----------- FATAL ERROR -----------");
+            Console.WriteLine(ex.ToString()); // This prints the full exception with all inner exceptions
+        }
+        finally
+        {
+            // This block will always execute, keeping the window open
+            Log.CloseAndFlush();
+            Console.WriteLine("Press Enter to exit...");
+            Console.ReadLine();
+        }
     }
 
+    // This method was missing from my previous answer, causing the error.
+    // It needs to be here.
     public static IHostBuilder CreateHostBuilder(string[] args) =>
         Host.CreateDefaultBuilder(args)
             .AddAppSettingsSecretsJson()

@@ -1,14 +1,15 @@
 using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
+using Volo.Abp.Application.Dtos;
+using Volo.Abp.Application.Services;
 using Acme.Ecommerce.Products.Dtos;
 
 namespace Acme.Ecommerce.Products
 {
-    public interface ICategoryAppService
+    public interface ICategoryAppService : IApplicationService
     {
         Task<CategoryDto> GetAsync(Guid id);
-        Task<List<CategoryDto>> GetListAsync(int page, int pageSize);
+        Task<PagedResultDto<CategoryDto>> GetListAsync(PagedAndSortedResultRequestDto input);
         Task<CategoryDto> CreateAsync(CreateUpdateCategoryDto input);
         Task<CategoryDto> UpdateAsync(Guid id, CreateUpdateCategoryDto input);
         Task DeleteAsync(Guid id);

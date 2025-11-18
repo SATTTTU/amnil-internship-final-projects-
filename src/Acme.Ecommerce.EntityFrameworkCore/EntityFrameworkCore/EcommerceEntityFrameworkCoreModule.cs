@@ -1,15 +1,40 @@
-﻿using Microsoft.EntityFrameworkCore; 
-using Volo.Abp.AuditLogging.EntityFrameworkCore;// <-- Make sure this is included!
+﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Volo.Abp.Modularity;
 using Volo.Abp.EntityFrameworkCore;
 using Volo.Abp.EntityFrameworkCore.PostgreSql;
-using Volo.Abp.Modularity;
-using Acme.Ecommerce.Domain; 
+
+// ABP Modules required for authentication/authorization
+using Volo.Abp.Identity.EntityFrameworkCore;         // Users, Roles
+using Volo.Abp.PermissionManagement.EntityFrameworkCore;
+using Volo.Abp.TenantManagement.EntityFrameworkCore;
+
+// Audit Logging
+using Volo.Abp.AuditLogging.EntityFrameworkCore;
+
+using Acme.Ecommerce.Domain;
 
 namespace Acme.Ecommerce.EntityFrameworkCore
 {
-    [DependsOn(typeof(EcommerceDomainModule), typeof(AbpEntityFrameworkCorePostgreSqlModule),  typeof(AbpAuditLoggingEntityFrameworkCoreModule))]
-    // Add EF Core modules for ABP management features so their repositories/mappings are registered
+    [DependsOn(
+        // Your Domain Module
+        typeof(EcommerceDomainModule),
+
+        // EF Core + PostgreSQL
+        typeof(AbpEntityFrameworkCorePostgreSqlModule),
+
+        // Identity (users, roles, login)
+        typeof(AbpIdentityEntityFrameworkCoreModule),
+
+        // Permissions
+        typeof(AbpPermissionManagementEntityFrameworkCoreModule),
+
+        // Tenant Management (optional)
+        typeof(AbpTenantManagementEntityFrameworkCoreModule),
+
+        // ABP Audit Logging
+        typeof(AbpAuditLoggingEntityFrameworkCoreModule)
+    )]
     public class EcommerceEntityFrameworkCoreModule : AbpModule
     {
         public override void PreConfigureServices(ServiceConfigurationContext context)
@@ -21,20 +46,18 @@ namespace Acme.Ecommerce.EntityFrameworkCore
         {
             var configuration = context.Services.GetConfiguration();
 
+            // Register DbContext + default repositories
             context.Services.AddAbpDbContext<EcommerceDbContext>(options =>
             {
-                /* Create default repositories for all entities */
                 options.AddDefaultRepositories(includeAllEntities: true);
             });
 
-            // Configure the EF Core DbContextOptions for ABP
-            Configure<Volo.Abp.EntityFrameworkCore.AbpDbContextOptions>(abpOptions =>
+            // Configure EF Core provider + connection string
+            Configure<AbpDbContextOptions>(options =>
             {
-                abpOptions.Configure(dbContextConfigurationContext =>
+                options.Configure(config =>
                 {
-                    dbContextConfigurationContext.DbContextOptions.UseNpgsql(
-                        configuration["ConnectionStrings:Default"]
-                    );
+                    config.DbContextOptions.UseNpgsql(configuration["ConnectionStrings:Default"]);
                 });
             });
         }

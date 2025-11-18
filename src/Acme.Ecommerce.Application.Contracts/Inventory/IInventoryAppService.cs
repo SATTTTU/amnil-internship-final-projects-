@@ -10,5 +10,8 @@ namespace Acme.Ecommerce.Inventory
         Task<InventoryDto> GetByProductIdAsync(Guid productId);
         Task<InventoryDto> IncreaseStockAsync(Guid productId, UpdateInventoryDto input);
         Task<InventoryDto> DecreaseStockAsync(Guid productId, UpdateInventoryDto input);
+
+        Task<InventoryDto> CreateAsync(UpdateInventoryDto input);
+        Task DeleteAsync(Guid id);
     }
 }

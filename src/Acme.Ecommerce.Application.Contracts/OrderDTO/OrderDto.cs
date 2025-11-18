@@ -15,4 +15,9 @@ namespace Acme.Ecommerce.Orders.Dtos
         public decimal TotalAmount { get; set; }
         public List<OrderItemDto> OrderItems { get; set; }
     }
+    public class UpdateOrderStatusDto
+    {
+        public Guid OrderId { get; set; }
+        public OrderStatus Status { get; set; }
+    }
 }

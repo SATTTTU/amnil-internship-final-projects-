@@ -9,4 +9,9 @@ namespace Acme.Ecommerce.Orders.Dtos
         public int Quantity { get; set; }
         public decimal UnitPrice { get; set; }
     }
+    public class RemoveOrderItemDto
+    {
+        public Guid OrderId { get; set; }
+        public Guid OrderItemId { get; set; }
+    }
 }

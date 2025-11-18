@@ -9,12 +9,15 @@ namespace Acme.Ecommerce.Domain.Entities
         public Guid ProductId { get; protected set; }
         public int StockQuantity { get; protected set; }
         public Product Product { get; protected set; }
+       private  Inventory()
+        {
+        }
 
-        public Inventory(Guid id, Guid productId, int initialStock)
+        public Inventory(Guid id, Guid productId, int stock)
             : base(id)
         {
             SetProduct(productId);
-            SetInitialStock(initialStock);
+            SetInitialStock(stock);
         }
 
         public void SetProduct(Guid productId)
@@ -27,14 +30,14 @@ namespace Acme.Ecommerce.Domain.Entities
             ProductId = productId;
         }
 
-        public void SetInitialStock(int initialStock)
+        public void SetInitialStock(int stock)
         {
-            if (initialStock < 0)
+            if (stock < 0)
             {
                 throw new BusinessException("Initial stock cannot be negative.");
             }
 
-            StockQuantity = initialStock;
+            StockQuantity = stock;
         }
 
         public void IncreaseStock(int quantity)
@@ -46,7 +49,6 @@ namespace Acme.Ecommerce.Domain.Entities
 
             StockQuantity += quantity;
         }
-
         public void DecreaseStock(int quantity)
         {
             if (quantity <= 0)

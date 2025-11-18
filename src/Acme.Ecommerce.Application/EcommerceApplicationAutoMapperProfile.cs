@@ -4,6 +4,7 @@ using Acme.Ecommerce.Domain.Entities;
 using Acme.Ecommerce.Products.Dtos;
 using Acme.Ecommerce.Inventory.Dtos;
 using Acme.Ecommerce.Orders.Dtos;
+using Volo.Abp.Identity;
 
 namespace Acme.Ecommerce;
 
@@ -12,7 +13,13 @@ public class EcommerceApplicationAutoMapperProfile : Profile
     public EcommerceApplicationAutoMapperProfile()
     {
         // ============================================================
-        // CATEGORY
+        // IDENTITY (Correct - No changes needed)
+        // ============================================================
+        CreateMap<IdentityUser, IdentityUserDto>();
+        CreateMap<IdentityRole, IdentityRoleDto>();
+
+        // ============================================================
+        // CATEGORY (Correct - No changes needed)
         // ============================================================
         CreateMap<Category, CategoryDto>();
 
@@ -26,7 +33,7 @@ public class EcommerceApplicationAutoMapperProfile : Profile
 
 
         // ============================================================
-        // PRODUCT
+        // PRODUCT (Correct - No changes needed)
         // ============================================================
         CreateMap<Product, ProductDto>()
             .ForMember(dest => dest.CategoryName, opt => opt.MapFrom(src => src.Category.Name));
@@ -45,33 +52,27 @@ public class EcommerceApplicationAutoMapperProfile : Profile
         // ============================================================
         CreateMap<Domain.Entities.Inventory, InventoryDto>();
 
-        // This mapping assumes you load the Inventory entity before updating.
+        // FIXED MAPPING: Added ignores for all unmapped base entity and navigation properties.
         CreateMap<UpdateInventoryDto, Domain.Entities.Inventory>()
+            .ForMember(dest => dest.StockQuantity, opt => opt.MapFrom(src => src.Quantity))
             .ForMember(x => x.Id, opt => opt.Ignore())
             .ForMember(x => x.ProductId, opt => opt.Ignore())
-            .ForMember(dest => dest.StockQuantity, opt => opt.MapFrom(src => src.Quantity));
+            .ForMember(x => x.Product, opt => opt.Ignore()) // Must ignore navigation properties
+            .IgnoreAuditedObjectProperties() // Ignores CreationTime, CreatorId, etc.
+            .IgnoreFullAuditedObjectProperties() // Ignores DeletionTime, IsDeleted, etc.
+            .ForMember(x => x.ExtraProperties, opt => opt.Ignore())
+            .ForMember(x => x.ConcurrencyStamp, opt => opt.Ignore());
 
 
         // ============================================================
         // ORDER
         // ============================================================
+        // These mappings from Entity to DTO are correct and should remain.
         CreateMap<Order, OrderDto>();
         CreateMap<OrderItem, OrderItemDto>();
 
-        CreateMap<CreateOrderDto, Order>()
-            .ForMember(x => x.Id, opt => opt.Ignore())
-            .ForMember(x => x.OrderDate, opt => opt.Ignore())
-            .ForMember(dest => dest.OrderItems, opt => opt.MapFrom(src => src.OrderItems)) // Correctly map the collection
-            .ForMember(x => x.TotalAmount, opt => opt.Ignore())
-            .ForMember(x => x.Status, opt => opt.Ignore()) // Explicitly ignore server-side set properties
-            .IgnoreAuditedObjectProperties()
-            .IgnoreFullAuditedObjectProperties()
-            .ForMember(x => x.ExtraProperties, opt => opt.Ignore())
-            .ForMember(x => x.ConcurrencyStamp, opt => opt.Ignore());
-
-        CreateMap<CreateOrderItemDto, OrderItem>()
-            .ForMember(x => x.Id, opt => opt.Ignore())
-            .ForMember(x => x.OrderId, opt => opt.Ignore())
-            .ForMember(x => x.UnitPrice, opt => opt.Ignore()); // This should be set in the application service
+        // DELETED MAPPING: The following two `CreateMap` calls have been removed
+        // because you should not use AutoMapper to create complex entities
+        // like Orders and OrderItems. This must be done manually in your AppService.
     }
 }

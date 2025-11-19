@@ -1,16 +1,25 @@
 ﻿using Localization.Resources.AbpUi;
 using Acme.Ecommerce.Localization;
-// Identity/Account/TenantManagement removed to keep app domain-only
 using Volo.Abp.Localization;
 using Volo.Abp.Modularity;
-// Permission/Setting management removed
-using Volo.Abp.TenantManagement;
+
+using Volo.Abp.Account;
+using Volo.Abp.Identity;
+using Volo.Abp.Modularity;
+
 
 namespace Acme.Ecommerce;
 
 [DependsOn(
+    typeof(EcommerceApplicationContractsModule),
+
+   // Identity User / Role controllers
+   typeof(AbpIdentityHttpApiModule),
+    typeof(AbpAccountHttpApiModule),
     typeof(EcommerceApplicationContractsModule)
-)] 
+
+    // Tenant Management
+)]
 public class EcommerceHttpApiModule : AbpModule
 {
     public override void ConfigureServices(ServiceConfigurationContext context)
@@ -24,9 +33,7 @@ public class EcommerceHttpApiModule : AbpModule
         {
             options.Resources
                 .Get<EcommerceResource>()
-                .AddBaseTypes(
-                    typeof(AbpUiResource)
-                );
+                .AddBaseTypes(typeof(AbpUiResource));
         });
     }
 }

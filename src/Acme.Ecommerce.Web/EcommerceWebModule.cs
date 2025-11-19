@@ -1,7 +1,6 @@
 using System;
 using System.IO;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -9,8 +8,6 @@ using Microsoft.Extensions.Hosting;
 using Acme.Ecommerce.EntityFrameworkCore;
 using Acme.Ecommerce.Localization;
 using Acme.Ecommerce.MultiTenancy;
-using System.Collections.Generic;
-
 using Acme.Ecommerce.Web.Menus;
 using Microsoft.OpenApi.Models;
 using Volo.Abp;
@@ -32,10 +29,15 @@ using Volo.Abp.UI.Navigation.Urls;
 using Volo.Abp.UI;
 using Volo.Abp.UI.Navigation;
 using Volo.Abp.VirtualFileSystem;
+using System.Collections.Generic;
+
+
+// Identity & Account
 using Volo.Abp.Identity;
 using Volo.Abp.Identity.AspNetCore;
-using Volo.Abp.Account;
 using Volo.Abp.Account.Web;
+
+// OpenIddict
 using Volo.Abp.OpenIddict;
 
 namespace Acme.Ecommerce.Web;
@@ -45,23 +47,24 @@ namespace Acme.Ecommerce.Web;
     typeof(EcommerceApplicationModule),
     typeof(EcommerceEntityFrameworkCoreModule),
 
+    // Identity modules
+    typeof(AbpIdentityApplicationModule),
     typeof(AbpIdentityAspNetCoreModule),
     typeof(AbpAccountWebModule),
-    typeof(AbpAccountHttpApiModule),
+
+    // OpenIddict
     typeof(AbpOpenIddictAspNetCoreModule),
 
+    // UI / Framework
     typeof(AbpAutofacModule),
     typeof(AbpAspNetCoreMvcUiLeptonXLiteThemeModule),
     typeof(AbpAspNetCoreSerilogModule),
     typeof(AbpSwashbuckleModule)
 )]
-
 public class EcommerceWebModule : AbpModule
 {
     public override void PreConfigureServices(ServiceConfigurationContext context)
     {
-        var hostingEnvironment = context.Services.GetHostingEnvironment();
-
         context.Services.PreConfigure<AbpMvcDataAnnotationsLocalizationOptions>(options =>
         {
             options.AddAssemblyResource(
@@ -101,13 +104,10 @@ public class EcommerceWebModule : AbpModule
     {
         Configure<AbpBundlingOptions>(options =>
         {
-            options.StyleBundles.Configure(
-                LeptonXLiteThemeBundles.Styles.Global,
-                bundle =>
-                {
-                    bundle.AddFiles("/global-styles.css");
-                }
-            );
+            options.StyleBundles.Configure(LeptonXLiteThemeBundles.Styles.Global, bundle =>
+            {
+                bundle.AddFiles("/global-styles.css");
+            });
         });
     }
 
@@ -119,17 +119,25 @@ public class EcommerceWebModule : AbpModule
         });
     }
 
-    private void ConfigureVirtualFileSystem(IWebHostEnvironment hostingEnvironment)
+    private void ConfigureVirtualFileSystem(IWebHostEnvironment env)
     {
-        if (hostingEnvironment.IsDevelopment())
+        if (env.IsDevelopment())
         {
             Configure<AbpVirtualFileSystemOptions>(options =>
             {
-                options.FileSets.ReplaceEmbeddedByPhysical<EcommerceDomainSharedModule>(Path.Combine(hostingEnvironment.ContentRootPath, $"..{Path.DirectorySeparatorChar}Acme.Ecommerce.Domain.Shared"));
-                options.FileSets.ReplaceEmbeddedByPhysical<EcommerceDomainModule>(Path.Combine(hostingEnvironment.ContentRootPath, $"..{Path.DirectorySeparatorChar}Acme.Ecommerce.Domain"));
-                options.FileSets.ReplaceEmbeddedByPhysical<EcommerceApplicationContractsModule>(Path.Combine(hostingEnvironment.ContentRootPath, $"..{Path.DirectorySeparatorChar}Acme.Ecommerce.Application.Contracts"));
-                options.FileSets.ReplaceEmbeddedByPhysical<EcommerceApplicationModule>(Path.Combine(hostingEnvironment.ContentRootPath, $"..{Path.DirectorySeparatorChar}Acme.Ecommerce.Application"));
-                options.FileSets.ReplaceEmbeddedByPhysical<EcommerceWebModule>(hostingEnvironment.ContentRootPath);
+                options.FileSets.ReplaceEmbeddedByPhysical<EcommerceDomainSharedModule>(
+                    Path.Combine(env.ContentRootPath, $"..{Path.DirectorySeparatorChar}Acme.Ecommerce.Domain.Shared"));
+
+                options.FileSets.ReplaceEmbeddedByPhysical<EcommerceDomainModule>(
+                    Path.Combine(env.ContentRootPath, $"..{Path.DirectorySeparatorChar}Acme.Ecommerce.Domain"));
+
+                options.FileSets.ReplaceEmbeddedByPhysical<EcommerceApplicationContractsModule>(
+                    Path.Combine(env.ContentRootPath, $"..{Path.DirectorySeparatorChar}Acme.Ecommerce.Application.Contracts"));
+
+                options.FileSets.ReplaceEmbeddedByPhysical<EcommerceApplicationModule>(
+                    Path.Combine(env.ContentRootPath, $"..{Path.DirectorySeparatorChar}Acme.Ecommerce.Application"));
+
+                options.FileSets.ReplaceEmbeddedByPhysical<EcommerceWebModule>(env.ContentRootPath);
             });
         }
     }
@@ -153,29 +161,19 @@ public class EcommerceWebModule : AbpModule
     private void ConfigureSwaggerServices(IServiceCollection services)
     {
         var configuration = services.GetConfiguration();
-
         var authority = (configuration["AuthServer:Authority"] ?? configuration["App:SelfUrl"] ?? "https://localhost:44390").TrimEnd('/');
-        var authorizationEndpoint = configuration["AuthServer:AuthorizationEndpoint"] ?? $"{authority}/connect/authorize";
-        var tokenEndpoint = configuration["AuthServer:TokenEndpoint"] ?? $"{authority}/connect/token";
 
         services.AddAbpSwaggerGenWithOAuth(
             authority,
-            new Dictionary<string, string>
-            {
-            { "Ecommerce", "Ecommerce API" }
-            },
+            new Dictionary<string, string> { { "Ecommerce", "Ecommerce API" } },
             options =>
             {
                 options.SwaggerDoc("v1", new OpenApiInfo { Title = "Ecommerce API", Version = "v1" });
                 options.DocInclusionPredicate((docName, desc) => true);
                 options.CustomSchemaIds(type => type.FullName);
-            },
-            authorizationEndpoint,
-            tokenEndpoint
+            }
         );
     }
-
-
 
     public override void OnApplicationInitialization(ApplicationInitializationContext context)
     {
@@ -212,11 +210,7 @@ public class EcommerceWebModule : AbpModule
         app.UseAbpSwaggerUI(options =>
         {
             options.SwaggerEndpoint("/swagger/v1/swagger.json", "Ecommerce API");
-            var configuration = context.ServiceProvider.GetRequiredService<IConfiguration>();
-            options.OAuthClientId(configuration["AuthServer:SwaggerClientId"]);
-            options.OAuthClientSecret(configuration["AuthServer:SwaggerClientSecret"]);
         });
-
 
         app.UseAuditing();
         app.UseAbpSerilogEnrichers();

@@ -1,17 +1,17 @@
 using System;
+using System.Threading.Tasks;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Application.Services;
 using Acme.TaskManagement.Contracts.Projects;
 
-
 namespace Acme.TaskManagement.Application.Contracts.Projects
-
 {
-    public interface IProjectAppService : ICrudAppService<
-        ProjectDto,
-        Guid,
-        PagedAndSortedResultRequestDto,
-        CreateUpdateProjectDto>
+    public interface IProjectAppService : IApplicationService
     {
+        Task<ProjectDto> GetAsync(Guid id);
+        Task<PagedResultDto<ProjectDto>> GetListAsync(PagedAndSortedResultRequestDto input);
+        Task<ProjectDto> CreateAsync(CreateUpdateProjectDto input);
+        Task<ProjectDto> UpdateAsync(Guid id, CreateUpdateProjectDto input);
+        Task DeleteAsync(Guid id);
     }
 }

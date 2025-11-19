@@ -28,7 +28,7 @@ public class TaskManagementDbContext :
 {
     /* Add DbSet properties for your Aggregate Roots / Entities here. */
     public DbSet<Project> Projects { get; set; }
-    public DbSet<Task> Tasks { get; set; }
+    public DbSet<TaskItem> Tasks { get; set; }
 
     #region Entities from the modules
     //Identity
@@ -81,7 +81,7 @@ public class TaskManagementDbContext :
         });
 
         // Task Entity Configuration
-        builder.Entity<Task>(b =>
+        builder.Entity<TaskItem>(b =>
         {
             b.ToTable(TaskManagementConsts.DbTablePrefix + "Tasks",
                 TaskManagementConsts.DbSchema);

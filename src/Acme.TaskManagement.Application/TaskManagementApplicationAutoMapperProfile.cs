@@ -13,8 +13,8 @@ namespace Acme.TaskManagement
             CreateMap<Project, ProjectDto>();
             CreateMap<CreateUpdateProjectDto, Project>();
 
-            CreateMap<Task, TaskDto>();
-            CreateMap<CreateUpdateTaskDto, Task>();
+            CreateMap<TaskItem, TaskDto>();
+            CreateMap<CreateUpdateTaskDto, TaskItem>();
 
             CreateMap<TaskStatus, TaskStatusDto>().ReverseMap();
         }

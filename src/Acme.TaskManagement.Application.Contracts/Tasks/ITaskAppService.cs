@@ -4,16 +4,17 @@ using Volo.Abp.Application.Dtos;
 using Volo.Abp.Application.Services;
 using Acme.TaskManagement.Contracts.Tasks;
 
-namespace Acme.TaskManagement.Application.Contracts.Tasks
+namespace Acme.TaskManagement.Tasks
 {
-    public interface ITaskAppService : ICrudAppService<
-        TaskDto,
-        Guid,
-        PagedAndSortedResultRequestDto,
-        CreateUpdateTaskDto>
+    public interface ITaskAppService : IApplicationService
     {
-        Task AssignTaskAsync(Guid id, AssignTaskDto input);
-        Task UpdateTaskStatusAsync(Guid id, TaskStatusDto status);
-        Task UpdateTaskProgressAsync(Guid id, int progress);
+        Task<TaskDto> CreateAsync(CreateUpdateTaskDto input);
+        Task<TaskDto> UpdateAsync(Guid id, CreateUpdateTaskDto input);
+        Task<TaskDto> AssignUserAsync(Guid id, Guid userId);
+        Task<TaskDto> UpdateProgressAsync(Guid id, int progress);
+        Task<TaskDto> ChangeStatusAsync(Guid id, TaskStatusDto status);
+        Task<TaskDto> GetAsync(Guid id);
+        Task<PagedResultDto<TaskDto>> GetListAsync(PagedAndSortedResultRequestDto input);
+        Task DeleteAsync(Guid id);
     }
 }

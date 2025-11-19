@@ -36,6 +36,23 @@ public class EcommercePermissionDefinitionProvider : PermissionDefinitionProvide
         inventoryPermission.AddChild(EcommercePermissions.Inventory.Delete, L("Permission:Inventory.Delete"));
     }
 
+    var ordersPermission = ecommerceGroup.AddPermission(
+    EcommercePermissions.Orders.Default,
+    L("Permission:Orders")
+);
+
+    // Customer permissions
+    ordersPermission.AddChild(EcommercePermissions.Orders.Create, L("Permission:Orders.Create"));
+ordersPermission.AddChild(EcommercePermissions.Orders.AddItem, L("Permission:Orders.AddItem"));
+ordersPermission.AddChild(EcommercePermissions.Orders.RemoveItem, L("Permission:Orders.RemoveItem"));
+ordersPermission.AddChild(EcommercePermissions.Orders.UpdateStatusSelf, L("Permission:Orders.UpdateStatusSelf"));
+
+// Admin permissions
+ordersPermission.AddChild(EcommercePermissions.Orders.Manage, L("Permission:Orders.Manage"));
+ordersPermission.AddChild(EcommercePermissions.Orders.UpdateStatus, L("Permission:Orders.UpdateStatus"));
+ordersPermission.AddChild(EcommercePermissions.Orders.Delete, L("Permission:Orders.Delete"));
+
+
     private static LocalizableString L(string name)
     {
         return LocalizableString.Create<EcommerceResource>(name);

@@ -12,6 +12,8 @@ using Acme.Ecommerce.Domain.Shared.Enums;
 
 using Microsoft.AspNetCore.Authorization;
 using Volo.Abp.Authorization;
+using Acme.Ecommerce.Permissions;
+
 
 using System.Collections.Generic;
 
@@ -31,6 +33,7 @@ namespace Acme.Ecommerce.Services
         // -------------------------------------------------------------------
         // CREATE ORDER
         // -------------------------------------------------------------------
+        [Authorize(EcommercePermissions.Orders.Create)]
         public async Task<OrderDto> CreateAsync(CreateOrderDto input)
         {
             try
@@ -101,6 +104,7 @@ namespace Acme.Ecommerce.Services
         // -------------------------------------------------------------------
         // CREATE ORDER ITEM
         // -------------------------------------------------------------------
+        [Authorize(EcommercePermissions.Orders.AddItem)]
         public async Task<OrderItemDto> CreateOrderItemAsync(Guid orderId, CreateOrderItemDto input)
         {
             try
@@ -131,6 +135,7 @@ namespace Acme.Ecommerce.Services
         // -------------------------------------------------------------------
         // REMOVE ORDER ITEM
         // -------------------------------------------------------------------
+        [Authorize(EcommercePermissions.Orders.RemoveItem)]
         public async Task<bool> RemoveOrderItemAsync(Guid orderId, Guid orderItemId)
         {
             try
@@ -153,6 +158,7 @@ namespace Acme.Ecommerce.Services
         // -------------------------------------------------------------------
         // UPDATE ORDER STATUS
         // -------------------------------------------------------------------
+        [Authorize(EcommercePermissions.Orders.UpdateStatusSelf)]
         public async Task<OrderDto> UpdateStatusAsync(Guid id, OrderStatus status)
         {
             try
@@ -174,6 +180,7 @@ namespace Acme.Ecommerce.Services
         // -------------------------------------------------------------------
         // DELETE ORDER
         // -------------------------------------------------------------------
+        [Authorize(EcommercePermissions.Orders.Delete)]
         public async Task<bool> DeleteAsync(Guid id)
         {
             try

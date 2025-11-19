@@ -9,6 +9,8 @@ using Acme.Ecommerce.Products.Dtos;
 using Acme.Ecommerce.Domain.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Volo.Abp.Authorization;
+using Acme.Ecommerce.Permissions;
+
 
 
 namespace Acme.Ecommerce.Products
@@ -68,7 +70,7 @@ namespace Acme.Ecommerce.Products
         }
 
         // CRUD METHODS
-
+        [AllowAnonymous]
         public async Task<ProductDto> GetAsync(Guid id)
         {
             try
@@ -82,7 +84,7 @@ namespace Acme.Ecommerce.Products
                 throw;
             }
         }
-
+        [AllowAnonymous]
         public async Task<PagedResultDto<ProductDto>> GetListAsync(PagedAndSortedResultRequestDto input)
         {
             try
@@ -107,7 +109,7 @@ namespace Acme.Ecommerce.Products
                 throw;
             }
         }
-        [Authorize]
+        [Authorize(EcommercePermissions.Products.Create)]
         public async Task<ProductDto> CreateAsync(CreateUpdateProductDto input)
         {
             try
@@ -132,7 +134,8 @@ namespace Acme.Ecommerce.Products
                 throw;
             }
         }
-        [Authorize]
+        [Authorize(EcommercePermissions.Products.Edit)]
+
         public async Task<ProductDto> UpdateAsync(Guid id, CreateUpdateProductDto input)
         {
             try
@@ -153,7 +156,8 @@ namespace Acme.Ecommerce.Products
                 throw;
             }
         }
-        [Authorize]
+        [Authorize(EcommercePermissions.Products.Delete)]
+
         public async Task DeleteAsync(Guid id)
         {
             try

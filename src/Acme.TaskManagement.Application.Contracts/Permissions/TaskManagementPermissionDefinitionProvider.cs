@@ -8,9 +8,22 @@ public class TaskManagementPermissionDefinitionProvider : PermissionDefinitionPr
 {
     public override void Define(IPermissionDefinitionContext context)
     {
-        var myGroup = context.AddGroup(TaskManagementPermissions.GroupName);
-        //Define your own permissions here. Example:
-        //myGroup.AddPermission(TaskManagementPermissions.MyPermission1, L("Permission:MyPermission1"));
+        // Create main permission group
+        var group = context.AddGroup(TaskManagementPermissions.GroupName, L("Permission:TaskManagement"));
+
+        // PROJECT PERMISSIONS
+        var projectPermission = group.AddPermission(TaskManagementPermissions.Projects.Default, L("Permission:Projects"));
+        projectPermission.AddChild(TaskManagementPermissions.Projects.Create, L("Permission:Projects.Create"));
+        projectPermission.AddChild(TaskManagementPermissions.Projects.Update, L("Permission:Projects.Update"));
+        projectPermission.AddChild(TaskManagementPermissions.Projects.Delete, L("Permission:Projects.Delete"));
+
+        // TASK PERMISSIONS
+        var taskPermission = group.AddPermission(TaskManagementPermissions.Tasks.Default, L("Permission:Tasks"));
+        taskPermission.AddChild(TaskManagementPermissions.Tasks.Create, L("Permission:Tasks.Create"));
+        taskPermission.AddChild(TaskManagementPermissions.Tasks.Update, L("Permission:Tasks.Update"));
+        taskPermission.AddChild(TaskManagementPermissions.Tasks.Delete, L("Permission:Tasks.Delete"));
+        taskPermission.AddChild(TaskManagementPermissions.Tasks.Assign, L("Permission:Tasks.Assign"));
+        taskPermission.AddChild(TaskManagementPermissions.Tasks.UpdateProgress, L("Permission:Tasks.UpdateProgress"));
     }
 
     private static LocalizableString L(string name)

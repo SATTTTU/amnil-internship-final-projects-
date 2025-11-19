@@ -77,6 +77,7 @@ namespace Acme.TaskManagement.Application.Projects
         // ---------------------------------------
         // CREATE
         // ---------------------------------------
+        [Authorize]
         public async Task<ProjectDto> CreateAsync(CreateUpdateProjectDto input)
         {
             try
@@ -102,6 +103,7 @@ namespace Acme.TaskManagement.Application.Projects
         // ---------------------------------------
         // UPDATE
         // ---------------------------------------
+        [Authorize]
         public async Task<ProjectDto> UpdateAsync(Guid id, CreateUpdateProjectDto input)
         {
             try
@@ -126,6 +128,7 @@ namespace Acme.TaskManagement.Application.Projects
         // ---------------------------------------
         // DELETE
         // ---------------------------------------
+        [Authorize]
         public async Task DeleteAsync(Guid id)
         {
             try

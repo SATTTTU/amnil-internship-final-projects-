@@ -5,6 +5,9 @@ using Volo.Abp.Application.Dtos;
 using Volo.Abp.Domain.Repositories;
 using Acme.TaskManagement.Contracts.Tasks;
 using Acme.TaskManagement.Domain.Entities;
+using Microsoft.AspNetCore.Authorization;
+
+
 
 
 namespace Acme.TaskManagement.Tasks
@@ -18,7 +21,7 @@ namespace Acme.TaskManagement.Tasks
         {
             _taskRepository = taskRepository;
         }
-
+        [Authorize]
         public async Task<TaskDto> CreateAsync(CreateUpdateTaskDto input)
         {
             try
@@ -39,7 +42,7 @@ namespace Acme.TaskManagement.Tasks
                 throw new BusinessException("TASK_CREATION_FAILED", ex.Message);
             }
         }
-
+        [Authorize]
         public async Task<TaskDto> UpdateAsync(Guid id, CreateUpdateTaskDto input)
         {
             try
@@ -58,7 +61,7 @@ namespace Acme.TaskManagement.Tasks
                 throw new BusinessException("TASK_UPDATE_FAILED", ex.Message);
             }
         }
-
+        [Authorize]
         public async Task DeleteAsync(Guid id)
         {
             try
@@ -70,7 +73,7 @@ namespace Acme.TaskManagement.Tasks
                 throw new BusinessException("TASK_DELETE_FAILED", ex.Message);
             }
         }
-
+        [Authorize]
         public async Task<TaskDto> AssignUserAsync(Guid id, Guid userId)
         {
             try
@@ -87,7 +90,7 @@ namespace Acme.TaskManagement.Tasks
                 throw new BusinessException("TASK_ASSIGN_FAILED", ex.Message);
             }
         }
-
+        [Authorize]
         public async Task<TaskDto> UpdateProgressAsync(Guid id, int progress)
         {
             try

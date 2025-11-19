@@ -19,4 +19,12 @@ public static class EcommercePermissions
         public const string Edit = Default + ".Edit";
         public const string Delete = Default + ".Delete";
     }
+    public static class Inventory
+    {
+        public const string Default = GroupName + ".Inventory";
+        public const string Create = Default + ".Create";
+        public const string Increase = Default + ".Increase";
+        public const string Decrease = Default + ".Decrease";
+        public const string Delete = Default + ".Delete";
+    }
 }

@@ -9,6 +9,8 @@ using Volo.Abp.Authorization;
 using Volo.Abp;
 using Volo.Abp.Application.Services;
 using Volo.Abp.Domain.Repositories;
+using Acme.Ecommerce.Permissions;
+
 
 namespace Acme.Ecommerce.Inventory
 {
@@ -28,6 +30,7 @@ namespace Acme.Ecommerce.Inventory
         // ---------------------------------------------------
         // GET INVENTORY BY PRODUCT
         // ---------------------------------------------------
+        [Authorize(EcommercePermissions.Inventory.Default)]
         public async Task<InventoryDto> GetByProductIdAsync(Guid productId)
         {
             try
@@ -49,6 +52,7 @@ namespace Acme.Ecommerce.Inventory
                 throw new BusinessException("Could not fetch inventory.");
             }
         }
+        [Authorize(EcommercePermissions.Inventory.Create)]
         public async Task<InventoryDto> CreateAsync(UpdateInventoryDto input)
         {
             try
@@ -57,7 +61,7 @@ namespace Acme.Ecommerce.Inventory
                 ValidateQuantity(input.Quantity);
 
                 var inventory = new Domain.Entities.Inventory(
-                    Guid.NewGuid(),      // use Guid.NewGuid()
+                    Guid.NewGuid(),      
                     input.ProductId,
                     input.Quantity
                 );
@@ -78,7 +82,7 @@ namespace Acme.Ecommerce.Inventory
         // ---------------------------------------------------
         // INCREASE STOCK
         // ---------------------------------------------------
-        [Authorize]
+        [Authorize(EcommercePermissions.Inventory.Increase)]
         public async Task<InventoryDto> IncreaseStockAsync(Guid productId, UpdateInventoryDto input)
         {
             try
@@ -109,7 +113,7 @@ namespace Acme.Ecommerce.Inventory
         // ---------------------------------------------------
         // DECREASE STOCK
         // ---------------------------------------------------
-        [Authorize]
+        [Authorize(EcommercePermissions.Inventory.Decrease)]
         public async Task<InventoryDto> DecreaseStockAsync(Guid productId, UpdateInventoryDto input)
         {
             try
@@ -136,6 +140,7 @@ namespace Acme.Ecommerce.Inventory
                 throw new BusinessException("Could not decrease stock.");
             }
         }
+        [Authorize(EcommercePermissions.Inventory.Delete)]
         public async Task DeleteAsync(Guid id)
         {
             try
